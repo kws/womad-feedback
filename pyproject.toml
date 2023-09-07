@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "womad-feedback"
+version = "0.1.0"
+description = ""
+authors = ["Kaj Siebert <kaj@k-si.com>"]
+readme = "README.md"
+packages = [{include = "womad_feedback"}]
+
+[tool.poetry.dependencies]
+python = "^3.11,<3.12"
+opencv-python = "^4.8.0.76"
+Pillow = "^10.0.0"
+scikit-image = "^0.21.0"
+pdf2image = "^1.16.3"
+click = "^8.1.7"
+tqdm = "^4.66.1"
+deskew = "^1.4.3"
+reportlab = "^4.0.4"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+isort = "^5.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+womad-feedback = "womad_feedback.__main__:cli"
+
