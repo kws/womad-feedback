@@ -1,4 +1,3 @@
-import shutil
 from collections import Counter
 from pathlib import Path
 
@@ -6,6 +5,7 @@ import click
 import cv2
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 from reportlab.pdfgen import canvas
 from tqdm import tqdm
 
@@ -15,6 +15,9 @@ from womad_feedback.average import least_black as _least_black
 from womad_feedback.extract import extract_from_pdf, pdf_to_images
 from womad_feedback.regions import RegionExtractor
 from womad_feedback.src_images import IMAGES
+from womad_feedback.textractor import extract_session
+
+load_dotenv()
 
 OUTPUT_FOLDER = Path("output")
 
@@ -108,6 +111,16 @@ def extract_regions(filenames, force):
             print(results)
         except Exception as e:
             click.echo(f"Error extracting {session_name}: {e}")
+
+
+@cli.command()
+@click.argument(
+    "filenames", nargs=-1, type=click.Path(exists=True, readable=True, path_type=Path)
+)
+def extract_text(filenames):
+    for session_name in filenames:
+        click.echo(f"Extracting {session_name}")
+        extract_session(session_name)
 
 
 if __name__ == "__main__":
