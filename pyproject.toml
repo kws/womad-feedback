@@ -16,6 +16,11 @@ click = "^8.1.7"
 tqdm = "^4.66.1"
 deskew = "^1.4.3"
 reportlab = "^4.0.4"
+pyyaml = "^6.0.1"
+jupyterlab = "^4.0.5"
+matplotlib = "^3.7.2"
+pandas = "^2.1.0"
+openpyxl = "^3.1.2"
 
 
 [tool.poetry.group.dev.dependencies]

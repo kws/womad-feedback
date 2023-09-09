@@ -1,0 +1,133 @@
+questions:
+
+  2022:
+
+    q1:
+      question: "Did you enjoy it?"
+      boxes:
+        Yes:
+          pos: [596, 373]
+          answer: Yes
+        No:
+          pos: [839, 377]
+          answer: No
+    
+    q2:
+      question: "Was it as you expected?"
+      boxes:
+        Yes:
+          pos: [703, 478]
+          answer: Yes
+        No:
+          pos: [990, 476]
+          answer: No
+
+    q3:
+      question: "Was the duration and Level"
+      boxes:
+        Just right:
+          pos: [838, 606]
+          answer: Right
+        Too complicated:
+          pos: [1293, 616]
+          answer: Complicated
+
+    q4:
+      question: "Age range"
+      boxes:
+        "6 - 10":
+          pos: [482, 720]
+          answer: "6 - 10"
+        "11 - 15":
+          pos: [742, 721]
+          answer: "11 - 15"
+        "16 - 24":
+          pos: [987, 721]
+          answer: "16 - 24"
+        "25 and over":
+          pos: [1311, 721]
+          answer: "25 and over"
+
+    q5:
+      question: "How many times a year to go to science events?"
+      boxes:
+        Never:
+          pos: [1158, 829]
+          answer: Never
+        "1 - 3":
+          pos: [1338, 831]
+          answer: "1 - 3"
+        "Over 4":
+          pos: [1532, 832]
+          answer: "Over 4"
+
+    q6:
+      question: "Would you come back?"
+      boxes:
+        Yes:
+          pos: [1062, 922]
+          answer: Yes
+        No:
+          pos: [1264, 924]
+          answer: No
+
+  2023:
+
+    q2:
+      question: "Which gender do you identify as?"
+      boxes:
+        Male: 
+          pos: [797, 285]
+          answer: Male
+        Female:
+          pos: [1069, 285]
+          answer: Female
+        Other:
+          pos: [1259, 283]
+          answer: Other
+
+    q3:
+      question: "How old are you?"
+      boxes:
+        "Under 11":
+          pos: [641, 380]
+          answer: Young
+        "11 to 18":
+          pos: [1007, 383]
+          answer: 11
+        "Over 18":
+          pos: [1437, 380]
+          answer: Old
+
+    q4:
+      question: "Have you been to world of physics before?"
+      boxes:
+        Yes:
+          pos: [925, 478]
+          answer: Yes
+        No:
+          pos: [1319, 470]
+          answer: No
+
+    q5:
+      question: I enjoyed the session I attended
+      numbers:
+        pos: [691, 703]
+
+    q6:
+      question: The session was what I expected
+      numbers:
+        pos: [691, 825]
+
+    q7:
+      question: The sessions was the right length and level
+      numbers:
+        pos: [693, 939]
+
+    q8:
+      question: I will come back to the World of Physics
+      numbers:
+        pos: [694, 1042]
+        height: 30
+
+

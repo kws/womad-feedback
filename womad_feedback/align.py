@@ -15,13 +15,17 @@ class ImageStats(NamedTuple):
 
 
 class ImageAligner:
-    def __init__(self) -> None:
-        self.orb = cv2.ORB_create()
-        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+    def __init__(self, use_sift=False, use_knn=False) -> None:
+        self.use_sift = use_sift
+        self.use_knn = use_knn
+        self.detector = cv2.SIFT_create() if use_sift else cv2.ORB_create()
+        self.bf = cv2.BFMatcher(
+            cv2.NORM_L2 if use_sift else cv2.NORM_HAMMING, crossCheck=True
+        )
         self.base_images = {}
 
     def get_image_stats(self, image):
-        keypoints, descriptors = self.orb.detectAndCompute(image, None)
+        keypoints, descriptors = self.detector.detectAndCompute(image, None)
         return ImageStats(keypoints, descriptors, image)
 
     def add_base_image(self, name, image):
@@ -32,7 +36,12 @@ class ImageAligner:
 
         match_stats = []
         for name, base_image in self.base_images.items():
-            matches = self.bf.match(base_image.descriptors, image_stats.descriptors)
+            if self.use_knn:
+                matches = self.bf.knnMatch(
+                    base_image.descriptors, image_stats.descriptors, k=2
+                )
+            else:
+                matches = self.bf.match(base_image.descriptors, image_stats.descriptors)
             match_stats.append((name, matches))
 
         match_stats = sorted(match_stats, key=lambda x: len(x[1]), reverse=True)
@@ -42,7 +51,13 @@ class ImageAligner:
         base_stats = self.base_images[base_name]
         image_stats = self.get_image_stats(image)
 
+        return self.align_with_stats(image, image_stats, base_stats)
+
+    def align_with_stats(self, image, image_stats, base_stats):
         matches = self.bf.match(base_stats.descriptors, image_stats.descriptors)
+        if len(matches) < 4:
+            click.secho(f"Not enough matches are found - {len(matches)}/4", color="red")
+            return None
 
         # Sort the matches based on distance
         matches = sorted(matches, key=lambda x: x.distance)

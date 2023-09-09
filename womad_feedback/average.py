@@ -24,7 +24,95 @@ def create_average_image(project_folder: Path):
 
         image_path = project_folder / f"average-{template}.png"
         cv2.imwrite(image_path.as_posix(), average_image)
-        click.echo(f"Saved {image_path}")
+        click.echo(f"Saved {image_path} based on {len(images)} images")
+
+
+def least_black(project_folder: Path):
+    filenames = project_folder.glob("**/02 - aligned/*.png")
+    filenames = list(filenames)
+
+    # Count black pixels for each image
+    file_stats = []
+    for filename in filenames:
+        img = cv2.imread(filename.as_posix(), 0)
+        img = crop_image(img, 100)
+        total_white = np.sum(img)
+
+        _, template = filename.stem.rsplit("-", 1)
+        file_stats.append((filename, template, total_white))
+
+    file_stats = sorted(file_stats, key=lambda x: x[2], reverse=True)
+    unique_templates = set([x[1] for x in file_stats])
+
+    for template in unique_templates:
+        click.echo(f"Template: {template}")
+        # Print top three for each template
+        template_stats = [x for x in file_stats if x[1] == template]
+        for filename, _, total_white in template_stats[:3]:
+            if template in filename.stem:
+                click.echo(f"  {filename.as_posix()} {total_white}")
+
+
+def crop_image(image, crop_pixels):
+    """
+    Crop the image so that the image
+    """
+    height, width = image.shape[:2]
+
+    # Validate if cropping is possible
+    if height < 2 * crop_pixels or width < 2 * crop_pixels:
+        print("Error: Crop size is larger than image dimensions.")
+        return
+
+    # Crop pixels from each side
+    cropped_image = image[
+        crop_pixels : height - crop_pixels, crop_pixels : width - crop_pixels
+    ]
+
+    return cropped_image
+
+
+def crop_region(image, x1, y1, x2, y2, pad_value=-1):
+    """
+    Crop the image to the given region. If any of the coordinates fall outside of the image dimensions, then
+    pad the image with white pixels.
+    """
+    # Get image dimensions
+    height, width = image.shape[:2]
+
+    # Check if coordinates fall outside, in which case we apply padding
+    if pad_value > 0:
+        if x1 < 0:
+            image = np.pad(
+                image, ((0, 0), (-x1, 0)), mode="constant", constant_values=pad_value
+            )
+            x2 -= x1
+            x1 = 0
+        if y1 < 0:
+            image = np.pad(
+                image, ((-y1, 0), (0, 0)), mode="constant", constant_values=pad_value
+            )
+            y2 -= y1
+            y1 = 0
+        if x2 > width:
+            image = np.pad(
+                image,
+                ((0, 0), (0, x2 - width)),
+                mode="constant",
+                constant_values=pad_value,
+            )
+        if y2 > height:
+            image = np.pad(
+                image,
+                ((0, y2 - height), (0, 0)),
+                mode="constant",
+                constant_values=pad_value,
+            )
+
+    # Crop the image
+    cropped_image = image[y1:y2, x1:x2]
+
+    return cropped_image
 
 
 def average_images():
