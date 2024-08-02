@@ -13,8 +13,8 @@ from womad_feedback.align import ImageAligner
 from womad_feedback.average import crop_region
 from womad_feedback.src_images import IMAGE_PATH, IMAGES
 
-BOX_SIZE = 150
-BOX_CROP = 50
+BOX_SIZE = 15
+BOX_CROP = 15
 NUMBERS_WIDTH = 600
 NUMBERS_HEIGHT = 40
 NUMBERS_OFFSETS = [-280, -125, 2, 135, 270]
@@ -72,7 +72,7 @@ def _gscale(image):
 
 
 class RegionExtractor:
-    def __init__(self):
+    def __init__(self, mask_size=7):
         self.defintions = region_definitions()
         self.templates = {template.stem: _gscale(template) for template in IMAGES}
         self.aligner = ImageAligner(use_sift=True, use_knn=True)
@@ -92,7 +92,7 @@ class RegionExtractor:
             _, average_tresh = cv2.threshold(image_region, 200, 255, cv2.THRESH_BINARY)
 
             # Create a kernel for dilation, you can change its size and shape
-            kernel = np.ones((7, 7), np.uint8)  # 3x3 square, you can adjust this size
+            kernel = np.ones((mask_size, mask_size), np.uint8)
 
             inverted_mask = cv2.bitwise_not(average_tresh)
             # Assuming `mask` is your average binary mask image
@@ -121,6 +121,13 @@ class RegionExtractor:
                         2,
                     )
         return template
+
+    def get_answer_defintion(self, id_string):
+        template_name, q, v = id_string.split("_")
+        regions = self.defintions[int(template_name)]
+        question = regions[q]
+        boxes = {str(k): v for k, v in question["boxes"].items()}
+        return boxes[v]
 
     def get_image_regions(self, image, template_name):
         image_regions = {}
@@ -155,19 +162,25 @@ class RegionExtractor:
                 for box_name, _ in question["boxes"].items():
                     yield template_name, question["question"], f"{box_name}"
 
-    def extract_regions(self, image_path: Path):
-        _, template_name = image_path.stem.rsplit("-", 1)
+    def extract_regions(self, image_path: Path, template_name=None, align=True):
+        if not template_name:
+            _, template_name = image_path.stem.rsplit("-", 1)
         image = _gscale(image_path)
         image_regions = self.get_image_regions(image, template_name)
 
         regions = {}
         for region_name, image_region in image_regions.items():
-            try:
-                aligned_image = self.aligner.align(image_region, region_name)
-            except Exception as e:
-                tb = traceback.format_exc()
-                click.secho(f"Failed to align {region_name}: {e}\n{tb}", color="red")
-                continue
+            if align:
+                try:
+                    aligned_image = self.aligner.align(image_region, region_name)
+                except Exception as e:
+                    tb = traceback.format_exc()
+                    click.secho(
+                        f"Failed to align {region_name}: {e}\n{tb}", color="red"
+                    )
+                    continue
+            else:
+                aligned_image = image_region
 
             template_image = self.template_regions[region_name]
             mask = self.template_masks[region_name]

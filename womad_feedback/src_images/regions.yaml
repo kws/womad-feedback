@@ -131,3 +131,73 @@ questions:
         height: 30
 
 
+  2024:
+
+    q1:
+      question: "Did you enjoy it?"
+      boxes:
+        Yes:
+          pos: [220, 110]
+          answer: Yes
+        No:
+          pos: [305, 110]
+          answer: No
+    
+    q2:
+      question: "Was it as you expected?"
+      boxes:
+        Yes:
+          pos: [258, 145]
+          answer: Yes
+        No:
+          pos: [354, 145]
+          answer: No
+
+    q3:
+      question: "Was the duration and Level"
+      boxes:
+        Just right:
+          pos: [305, 190]
+          answer: Right
+        Too complicated:
+          pos: [460, 193]
+          answer: Complicated
+
+    q4:
+      question: "Age range"
+      boxes:
+        "6 - 10":
+          pos: [183, 230]
+          answer: "6 - 10"
+        "11 - 15":
+          pos: [270, 230]
+          answer: "11 - 15"
+        "16 - 24":
+          pos: [355, 230]
+          answer: "16 - 24"
+        "25 and over":
+          pos: [465, 230]
+          answer: "25 and over"
+
+    q5:
+      question: "How many times a year to go to science events?"
+      boxes:
+        Never:
+          pos: [413, 265]
+          answer: Never
+        "1 - 3":
+          pos: [475, 265]
+          answer: "1 - 3"
+        "Over 4":
+          pos: [540, 265]
+          answer: "Over 4"
+
+    q6:
+      question: "Would you come back?"
+      boxes:
+        Yes:
+          pos: [380, 298]
+          answer: Yes
+        No:
+          pos: [449, 298]
+          answer: No
